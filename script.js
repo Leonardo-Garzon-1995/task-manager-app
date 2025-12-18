@@ -1,3 +1,7 @@
+const taskInput = document.getElementById("task-input")
+const addButton = document.getElementById("add-button")
+const tasksList = document.getElementById("tasks-list")
+
 class Task {
     constructor(id,title) {
         this.id = id;
@@ -29,7 +33,7 @@ class TaskManager {
     toggleTask(id) {
         let item = this.tasks.find(task => task.id === id)
         if (!item) {
-            console.log("Task not found")
+            alert("Task not found")
             return
         }
 
