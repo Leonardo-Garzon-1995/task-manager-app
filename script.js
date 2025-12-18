@@ -69,19 +69,26 @@ class StorageService {
     }
 }
 
-class TaskRenderer {}
+class TaskRenderer {
+    constructor() {
+        this.tasks = StorageService.load()
+    }
+
+    render() {
+        this.tasks.forEach(task => {
+            let li = document.createElement("li")
+            li.classList.add("task-item")
+            li.dataset.id = task.id
+            li.innerHTML = `
+                <input type="checkbox" ${task.complete ? "checked" : ""}>
+                <span class="task-title">${task.title}</span>
+                <span class="task-date">${task.createdAt.toLocaleDateString()}</span>
+                <button class="delete-button">❌</button>
+            `
+            tasksList.appendChild(li)
+        })
+    }
+}
 
 
-const manager = new TaskManager()
-
-manager.addTask("Walk the dog")
-manager.addTask("Walk the cat")
-manager.addTask("Walk the fish")
-manager.addTask("Walk the bird")
-manager.removeTask(2)
-manager.toggleTask(1)
-
-console.table(manager.tasks)
-console.table(manager.getCompleted())
-console.table(manager.getActive())
 
