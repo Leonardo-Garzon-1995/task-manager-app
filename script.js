@@ -17,27 +17,25 @@ class Task {
 
 class TaskManager {
     constructor() {
-        this.tasks = [];
+        this.tasks = StorageService.load();
     }
 
     addTask(title) {
-        let id = this.tasks.length + 1
+        let id = crypto.randomUUID()
         let task = new Task(id, title)
         this.tasks.push(task)
+        this.saveTasks()
     }
 
     removeTask(id) {
         this.tasks = this.tasks.filter(task => task.id !== id)
+        this.saveTasks()
     }
 
     toggleTask(id) {
         let item = this.tasks.find(task => task.id === id)
-        if (!item) {
-            alert("Task not found")
-            return
-        }
-
         item.toggle()
+        this.saveTasks()
     }
 
     getCompleted() {
@@ -46,6 +44,10 @@ class TaskManager {
 
     getActive() {
         return this.tasks.filter(task => !task.complete)
+    }
+
+    saveTasks() {
+        StorageService.save(this.tasks)
     }
 
 }
@@ -70,12 +72,10 @@ class StorageService {
 }
 
 class TaskRenderer {
-    constructor() {
-        this.tasks = StorageService.load()
-    }
 
-    render() {
-        this.tasks.forEach(task => {
+    render(tasks) {
+        tasksList.innerHTML = ""
+        tasks.forEach(task => {
             let li = document.createElement("li")
             li.classList.add("task-item")
             li.dataset.id = task.id
@@ -90,5 +90,43 @@ class TaskRenderer {
     }
 }
 
+const manager = new TaskManager()
+const renderer = new TaskRenderer()
 
+renderer.render(manager.tasks)
+
+
+addButton.addEventListener("click", () => {
+    let title = taskInput.value
+    if (title) {
+        manager.addTask(title)
+        taskInput.value = ""
+        renderer.render(manager.tasks)
+    }
+})
+
+taskInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+        addButton.click()
+    }
+})
+
+tasksList.addEventListener("click", e => {
+    const li = e.target.closest("li")
+    if (!li) return
+
+    const id = li.dataset.id
+
+    if (e.target.type === "checkbox") {
+        manager.toggleTask(id)
+        
+    }
+
+    if (e.target.classList.contains("delete-button")) {
+        manager.removeTask(id)
+        
+    }
+
+    renderer.render(manager.tasks)
+})
 
