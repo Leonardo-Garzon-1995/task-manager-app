@@ -3,7 +3,7 @@ const addButton = document.getElementById("add-button")
 const tasksList = document.getElementById("tasks-list")
 
 class Task {
-    constructor(id,title) {
+    constructor(id, title) {
         this.id = id;
         this.title = title;
         this.complete = false;
@@ -58,7 +58,7 @@ class StorageService {
     }
 
     static load() {
-        const items =JSON.parse(localStorage.getItem("tasks"))
+        const items = JSON.parse(localStorage.getItem("tasks"))
         if (Array.isArray(items)) {
             return items.map(item => {
                 let task = new Task(item.id, item.title)
